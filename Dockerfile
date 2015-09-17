@@ -34,8 +34,8 @@ RUN chmod 755 ${DAEMON_SERVICES_PATH}/mysql/run
 
 EXPOSE 3306/tcp
 VOLUME ["${MYSQL_DATA_DIR}", "${MYSQL_RUN_DIR}"]
-
-CMD ["/usr/bin/mysqld_safe"]
+COPY db/argus_accedian.sql /tmp/
+CMD /usr/bin/mysqld_safe
 
 #### config  java  application  ###
 ENV APP_NAME=argus \
