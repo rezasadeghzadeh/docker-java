@@ -1,0 +1,9 @@
+{
+	"develop":{
+		"CASSANDRA_HOST": "127.0.0.1", 
+		"MYSQL_HOST": "127.0.0.1" },
+	"deploy":{
+		"CASSANDRA_HOST": "127.0.0.1", 
+		"MYSQL_HOST": "127.0.0.1"
+		}
+}
