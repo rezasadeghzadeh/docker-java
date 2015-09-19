@@ -81,7 +81,7 @@ initialize_mysql_database() {
     echo "Creating debian-sys-maint user..."
     mysql -uroot -e "GRANT ALL PRIVILEGES on *.* TO 'debian-sys-maint'@'localhost' IDENTIFIED BY '' WITH GRANT OPTION;"
     mysql -uroot -e "create database  argus_accedian;"
-    mysql -uroot -e "GRANT ALL on argus_accedian.* to  'argus'@'localhost' IDENTIFIED BY 'argus';"
+    mysql -uroot -e "GRANT ALL on argus_accedian.* to  'argus'@'127.0.0.1' IDENTIFIED BY 'argus';"
     mysql -uroot argus_accedian  <  /tmp/argus_accedian.sql
 
 	

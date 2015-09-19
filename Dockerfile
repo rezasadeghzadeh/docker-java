@@ -46,7 +46,8 @@ ENV APP_NAME=argus \
 
 
 RUN mkdir /opt/${APP_NAME}  -p
-RUN mkdir  /opt/${APP_NAME}/logs -p
+RUN mkdir  /opt/${APP_NAME}/log -p
+RUN mkdir  /home/${APP_NAME}/upload -p
 RUN mkdir  /opt/${APP_NAME}/conf.d -p
 COPY conf.d/* /opt/${APP_NAME}/conf.d/
 RUN groupadd ${GROUP_NAME}
