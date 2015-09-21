@@ -1,4 +1,5 @@
 FROM ubuntu
+
 ENV DAEMON_SERVICES_PATH=/etc/init-services
 ###install  ssh server  ###
 RUN mkdir -p ${DAEMON_SERVICES_PATH}/sshd /var/run/sshd
