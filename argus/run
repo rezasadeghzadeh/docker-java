@@ -1,1 +1,2 @@
+#!/bin/bash
 java -classpath /opt/argus/argus-1.0-SNAPSHOT-jar-with-dependencies.jar:/opt/argus/conf.d/ ir.cvas.argus.Main
