@@ -17,8 +17,23 @@ RUN DEBIAN_FRONTEND=noninteractive \
 	openjdk-8-jdk \
 	openssh-server \
 	mysql-server \
-	daemontools
-
+	daemontools \
+	libffi-dev \
+	libcairo2-dev \
+	python-cairo \
+	libmysqlclient-dev \
+	python-ldap \
+	libxslt1-dev \
+	libxml2-dev \
+	python-dev \
+	python-mysqldb \
+	nginx \
+	python-pip \
+	build-essential \
+	uwsgi \
+	uwsgi-plugin-python \
+	supervisor \
+	python-setuptools 
 ### install  mysql-server ###
 ENV MYSQL_USER=mysql \
     MYSQL_DATA_DIR=/var/lib/mysql \
@@ -60,5 +75,35 @@ COPY argus-1.0-SNAPSHOT-jar-with-dependencies.jar /opt/${APP_NAME}/
 RUN mkdir ${DAEMON_SERVICES_PATH}/argus/ -p
 COPY argus/run  ${DAEMON_SERVICES_PATH}/argus/
 
+######### python app config ###################
+#RUN touch /tmp/argus2.sock
+#RUN chmod 666 /tmp/argus2.sock
+#RUN chown www-data /tmp/argus2.sock
+RUN mkdir  /opt/argus/www/r2tg -p
+COPY r2tg /opt/argus/www/r2tg
+RUN pip install -r /opt/argus/www/r2tg/requirements.txt
+COPY r2tg/docs/argus.conf /etc/nginx/sites-available/
+RUN ln -s /etc/nginx/sites-available/argus.conf /etc/nginx/sites-enabled/argus.conf
+RUN mkdir  /var/lib/nginx -p
+RUN chown www-data:www-data  /var/lib/nginx/ -R
+RUN chown www-data:www-data  /etc/nginx/ -R
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+RUN rm /etc/nginx/sites-available/default
+RUN rm /etc/nginx/sites-enabled/default
+COPY r2tg/docs/argus.ini /etc/uwsgi/apps-available/
+RUN chown argus:argus /opt/argus/www/ -R
+RUN ln -s /etc/uwsgi/apps-available/argus.ini /etc/uwsgi/apps-enabled/argus.ini
+RUN mkdir /var/log/argus/
+RUN touch /var/log/argus/debug.log
+RUN touch /var/log/argus/error.log
+RUN chown argus:argus -R /var/log/argus/
+CMD uwsgi --ini /etc/uwsgi/apps-enabled/argus.ini
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+RUN chmod  777 /tmp/ -R
+#RUN service uwsgi restart
+#RUN service nginx restart
 #ENTRYPOINT ["/sbin/entrypoint.sh"]
-ENTRYPOINT /usr/bin/svscan ${DAEMON_SERVICES_PATH}/
+#ENTRYPOINT /usr/bin/svscan ${DAEMON_SERVICES_PATH}/
+expose 80
+CMD ["/usr/bin/supervisord"]
+
