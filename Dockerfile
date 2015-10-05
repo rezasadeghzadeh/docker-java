@@ -35,6 +35,10 @@ RUN DEBIAN_FRONTEND=noninteractive \
 	supervisor \
 	python-setuptools \
 	libjpeg-dev 
+# install python plugin requirements
+RUN mkdir  /opt/argus/www/r2tg -p
+COPY r2tg /opt/argus/www/r2tg
+RUN pip install -r /opt/argus/www/r2tg/requirements.txt
 
 #clean packages
 RUN rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
@@ -59,15 +63,13 @@ RUN chown ${APP_USERNAME}:${GROUP_NAME} /opt/${APP_NAME} -R
 
 COPY argus-1.0-SNAPSHOT-jar-with-dependencies.jar /opt/${APP_NAME}/
 RUN mkdir ${DAEMON_SERVICES_PATH}/argus/ -p
-COPY argus/run  ${DAEMON_SERVICES_PATH}/argus/
+COPY argus/start-argus  /usr/local/bin/
+RUN chmod +x /usr/local/bin/start-argus
 
 ######### python app config ###################
 #RUN touch /tmp/argus2.sock
 #RUN chmod 666 /tmp/argus2.sock
 #RUN chown www-data /tmp/argus2.sock
-RUN mkdir  /opt/argus/www/r2tg -p
-COPY r2tg /opt/argus/www/r2tg
-RUN pip install -r /opt/argus/www/r2tg/requirements.txt
 COPY r2tg/docs/argus.conf /etc/nginx/sites-available/
 RUN ln -s /etc/nginx/sites-available/argus.conf /etc/nginx/sites-enabled/argus.conf
 RUN mkdir  /var/lib/nginx -p
