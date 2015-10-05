@@ -33,25 +33,11 @@ RUN DEBIAN_FRONTEND=noninteractive \
 	uwsgi \
 	uwsgi-plugin-python \
 	supervisor \
-	python-setuptools 
-### install  mysql-server ###
-ENV MYSQL_USER=mysql \
-    MYSQL_DATA_DIR=/var/lib/mysql \
-    MYSQL_RUN_DIR=/run/mysqld \
-    MYSQL_LOG_DIR=/var/log/mysql 
+	python-setuptools \
+	libjpeg-dev 
 
-RUN rm -rf ${MYSQL_DATA_DIR} \
- && rm -rf /var/lib/apt/lists/*
-
-RUN mkdir ${DAEMON_SERVICES_PATH}/mysql -p
-COPY mysql/run ${DAEMON_SERVICES_PATH}/mysql/
-RUN chmod 755 ${DAEMON_SERVICES_PATH}/mysql/run
-
-
-EXPOSE 3306/tcp
-VOLUME ["${MYSQL_DATA_DIR}", "${MYSQL_RUN_DIR}"]
-COPY db/argus_accedian.sql /tmp/
-CMD /usr/bin/mysqld_safe
+#clean packages
+RUN rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 #### config  java  application  ###
 ENV APP_NAME=argus \
@@ -105,5 +91,13 @@ RUN chmod  777 /tmp/ -R
 #ENTRYPOINT ["/sbin/entrypoint.sh"]
 #ENTRYPOINT /usr/bin/svscan ${DAEMON_SERVICES_PATH}/
 expose 80
+
+#mysql config
+EXPOSE 3306/tcp
+VOLUME ["/var/lib/mysql"]
+COPY db/argus_accedian.sql /tmp/
+COPY mysql/init-mysql.sh  /usr/local/bin/
+RUN chmod  +x  /usr/local/bin/init-mysql.sh
+
 CMD ["/usr/bin/supervisord"]
 
